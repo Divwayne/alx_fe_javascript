@@ -1,57 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dynamic Quote Generator</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dynamic Quote Generator — Storage & JSON</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 40px;
-      background: #f9f9f9;
-    }
-    #quoteDisplay {
-      margin: 20px auto;
-      font-size: 1.3em;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      width: 60%;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    input, button {
-      margin: 5px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    button {
-      background: #007bff;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #0056b3;
-    }
+    :root{--accent:#0b78e3;--success:#28a745}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:#f6f8fb;color:#111;padding:28px;display:flex;flex-direction:column;align-items:center;}
+    h1{margin:0 0 18px}
+    #quoteDisplay{background:#fff;border-radius:10px;padding:18px;width:min(760px,92%);box-shadow:0 6px 18px rgba(9,30,66,0.08);margin-bottom:12px}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+    input[type="text"]{padding:10px;border-radius:6px;border:1px solid #d0d7de}
+    button{padding:10px 14px;border-radius:8px;border:0;cursor:pointer;background:var(--accent);color:#fff}
+    button.secondary{background:#6c757d}
+    button.success{background:var(--success)}
+    label{font-size:0.9rem;color:#333}
+    .small{font-size:0.9rem;color:#555;margin-top:8px}
+    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    #importFile{display:none}
+    .box{background:#fff;padding:14px;border-radius:10px;box-shadow:0 4px 12px rgba(2,6,23,0.06);width:min(760px,92%);margin-bottom:12px}
+    footer{margin-top:18px;color:#666;font-size:0.9rem}
+    select{padding:10px;border-radius:6px;border:1px solid #d0d7de}
   </style>
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
 
-  <select id="categorySelect">
-    <option value="all">All Categories</option>
-  </select>
+  <div class="box">
+    <div class="row" style="justify-content:space-between;align-items:center;">
+      <div style="display:flex;gap:8px;align-items:center;">
+        <label for="categorySelect">Filter:</label>
+        <select id="categorySelect"><option value="all">All</option></select>
+        <button id="newQuote">Show New Quote</button>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button id="exportJson" title="Export quotes as JSON">Export JSON</button>
+        <label for="importFile" style="background:#fff;padding:0;border-radius:8px;cursor:pointer;border:1px solid #d0d7de">
+          <input id="importFile" type="file" accept=".json" />
+          <span style="display:inline-block;padding:10px 12px;">Import JSON</span>
+        </label>
+        <button id="clearStorage" class="secondary" title="Clear local quotes">Clear Storage</button>
+      </div>
+    </div>
 
-  <div id="quoteDisplay">Click "Show New Quote" to begin!</div>
-
-  <button id="newQuote">Show New Quote</button>
-
-  <div>
-    <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
-    <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
-    <button id="addQuote">Add Quote</button>
+    <div id="quoteDisplay">Click "Show New Quote" to begin!</div>
+    <div class="small" id="lastViewedNote"></div>
   </div>
+
+  <div class="box">
+    <h2>Add a New Quote</h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <input id="newQuoteText" type="text" placeholder="Enter a new quote" style="flex:1;min-width:220px" />
+      <input id="newQuoteCategory" type="text" placeholder="Enter quote category" style="min-width:160px" />
+      <button id="addQuote">Add Quote</button>
+    </div>
+    <div class="small">Tip: category names are stored as entered (case-insensitive grouping in selector).</div>
+  </div>
+
+  <div class="box">
+    <h2>Current Quotes (preview)</h2>
+    <div id="quotesList" style="display:grid;gap:8px"></div>
+  </div>
+
+  <footer>Built with ❤️ — Quotes persist using <strong>localStorage</strong>. Session remembers last viewed quote.</footer>
 
   <script src="script.js"></script>
 </body>
