@@ -190,7 +190,7 @@ function importFromJsonFile(file) {
 }
 
 /* ---------- server sync logic ---------- */
-async function fetchServerQuotes() {
+async function fetchQuotesFromServer() {
   showStatus('Fetching server updates...');
   try {
     const res = await fetch(SERVER_URL, {cache:'no-store'});
@@ -203,7 +203,7 @@ async function fetchServerQuotes() {
     }));
     return serverQuotes;
   } catch (e) {
-    console.warn('fetchServerQuotes error', e);
+    console.warn('fetchQuotesFromServer error', e);
     showStatus('Server fetch failed');
     return null;
   }
@@ -221,8 +221,8 @@ function arraysEqualByKey(a,b){
 /* Merge strategy: server takes precedence. Keep unique local quotes not present on server.
    Save a session backup of former local data for manual revert.
 */
-async function syncWithServer(manual=false) {
-  const serverQuotes = await fetchServerQuotes();
+async function syncQuotes(manual=false) {
+  const serverQuotes = await fetchQuotesFromServer();
   if (!serverQuotes) return;
   // check if different enough
   const serverKey = serverQuotes.map(q=>q.text+'||'+q.category).sort();
@@ -309,13 +309,13 @@ async function init() {
   get('exportBtn').addEventListener('click', exportToJsonFile);
   get('importBtn').addEventListener('click', () => { get('importFile').click(); });
   get('importFile').addEventListener('change', (e)=>{ const f=e.target.files && e.target.files[0]; if(f) importFromJsonFile(f); });
-  get('syncNowBtn').addEventListener('click', ()=> syncWithServer(true));
+  get('syncNowBtn').addEventListener('click', ()=> syncQuotes(true));
   notifAccept().addEventListener('click', acceptServerChanges);
   notifRevert().addEventListener('click', revertToLocalBackup);
 
   // Periodic sync every 30 seconds
-  await syncWithServer(false);
-  setInterval(()=>syncWithServer(false), 30000);
+  await syncQuotes(false);
+  setInterval(()=>syncQuotes(false), 30000);
 }
 
 /* ---------- utility display and random ---------- */
