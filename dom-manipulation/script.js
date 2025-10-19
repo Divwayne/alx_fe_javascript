@@ -1,75 +1,68 @@
-// === Dynamic Quote Generator: Server Sync Simulation ===
+let quotes = JSON.parse(localStorage.getItem("quotes")) || [
+  { text: "Stay positive.", category: "Motivation" },
+  { text: "Learn from failure.", category: "Inspiration" },
+  { text: "Focus on growth.", category: "Motivation" },
+];
 
-// Fetch quotes from a mock API
-function fetchQuotesFromServer() {
-  return fetch("https://jsonplaceholder.typicode.com/posts?_limit=5")
-    .then(response => response.json())
-    .then(data => data.map(item => ({
-      text: item.title,
-      category: "Server"
-    })))
-    .catch(err => {
-      console.error("Error fetching server data:", err);
-      return [];
-    });
-}
-
-// Post a quote to the server (simulation)
-function postQuoteToServer(quote) {
-  return fetch("https://jsonplaceholder.typicode.com/posts", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(quote)
-  })
-    .then(res => res.json())
-    .then(data => console.log("Posted to server:", data))
-    .catch(err => console.error("Post failed:", err));
-}
-
-// Merge logic and local storage update
-function syncQuotes() {
-  fetchQuotesFromServer().then(serverQuotes => {
-    const localQuotes = JSON.parse(localStorage.getItem("quotes") || "[]");
-    const merged = mergeQuotes(serverQuotes, localQuotes);
-    localStorage.setItem("quotes", JSON.stringify(merged));
-    showNotification("Quotes synced successfully with server (server data takes precedence).");
+function showQuotes(filteredQuotes) {
+  const display = document.getElementById("quoteDisplay");
+  display.innerHTML = "";
+  filteredQuotes.forEach(q => {
+    const p = document.createElement("p");
+    p.textContent = `${q.text} — (${q.category})`;
+    display.appendChild(p);
   });
 }
 
-// Merge logic — server-precedence conflict resolution
-function mergeQuotes(server, local) {
-  const seen = new Set();
-  const result = [];
-  server.forEach(q => {
-    const key = q.text + "|" + q.category;
-    seen.add(key);
-    result.push(q);
+function populateCategories() {
+  const categorySelect = document.getElementById("categoryFilter");
+  const categories = [...new Set(quotes.map(q => q.category))];
+  categorySelect.innerHTML = '<option value="all">All Categories</option>';
+  categories.forEach(cat => {
+    const opt = document.createElement("option");
+    opt.value = cat;
+    opt.textContent = cat;
+    categorySelect.appendChild(opt);
   });
-  local.forEach(q => {
-    const key = q.text + "|" + q.category;
-    if (!seen.has(key)) result.push(q);
-  });
-  return result;
-}
 
-// UI Notification
-function showNotification(msg) {
-  const el = document.getElementById("notification");
-  el.textContent = msg;
-  el.style.display = "block";
-  setTimeout(() => el.style.display = "none", 4000);
-}
-
-// Periodic sync
-setInterval(syncQuotes, 30000);
-
-// Manual sync button
-document.getElementById("syncBtn").addEventListener("click", syncQuotes);
-
-// On page load
-document.addEventListener("DOMContentLoaded", () => {
-  if (!localStorage.getItem("quotes")) {
-    localStorage.setItem("quotes", JSON.stringify([{ text: "Start strong!", category: "Motivation" }]));
+  // restore last selected filter
+  const lastSelected = localStorage.getItem("selectedCategory");
+  if (lastSelected) {
+    categorySelect.value = lastSelected;
+    filterQuotes();
+  } else {
+    showQuotes(quotes);
   }
-  syncQuotes();
+}
+
+function filterQuotes() {
+  const selected = document.getElementById("categoryFilter").value;
+  localStorage.setItem("selectedCategory", selected);
+
+  if (selected === "all") {
+    showQuotes(quotes);
+  } else {
+    const filtered = quotes.filter(q => q.category === selected);
+    showQuotes(filtered);
+  }
+}
+
+function addQuote() {
+  const text = document.getElementById("newQuoteText").value.trim();
+  const category = document.getElementById("newQuoteCategory").value.trim();
+  if (!text || !category) {
+    alert("Please fill both fields");
+    return;
+  }
+
+  quotes.push({ text, category });
+  localStorage.setItem("quotes", JSON.stringify(quotes));
+  populateCategories();
+  filterQuotes();
+  document.getElementById("newQuoteText").value = "";
+  document.getElementById("newQuoteCategory").value = "";
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  populateCategories();
 });
