@@ -1,83 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Dynamic Quote Generator — Server Sync</title>
-  <style>
-    :root{--accent:#0b78e3;--muted:#6c757d;--bg:#f6f9fc}
-    body{font-family:Arial,Helvetica,sans-serif;background:var(--bg);padding:24px;display:flex;justify-content:center}
-    .wrap{width:min(980px,96%)}
-    .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
-    #quoteDisplay{background:#fff;padding:16px;border-radius:8px;box-shadow:0 6px 18px rgba(2,6,23,0.06);min-height:64px}
-    select,input,button{padding:8px;border-radius:6px;border:1px solid #d0d7de}
-    button{cursor:pointer;background:var(--accent);color:#fff;border:0}
-    button.secondary{background:var(--muted)}
-    #notif{display:none;background:#fff;border:1px solid #ffeeba;color:#856404;padding:12px;border-radius:8px;margin:12px 0}
-    #notif .actions{margin-top:8px;display:flex;gap:8px}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-    .box{background:#fff;padding:12px;border-radius:8px;box-shadow:0 4px 12px rgba(2,6,23,0.04)}
-    footer{margin-top:14px;color:#666;font-size:0.9rem}
-    @media (max-width:720px){.grid{grid-template-columns:1fr}}
-  </style>
+  <meta charset="UTF-8">
+  <title>Dynamic Quote Generator - Server Sync</title>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Dynamic Quote Generator — Server Sync</h1>
-
-    <div id="notif" role="status" aria-live="polite">
-      <strong id="notif-title"></strong>
-      <div id="notif-body"></div>
-      <div class="actions">
-        <button id="notif-accept">Keep Server Changes</button>
-        <button id="notif-revert" class="secondary">Revert to Local</button>
-      </div>
-    </div>
-
-    <div class="controls">
-      <label for="categoryFilter">Category:</label>
-      <select id="categoryFilter" onchange="filterQuote()">
-        <option value="all">All</option>
-      </select>
-
-      <button id="newQuoteBtn" type="button">Show New Quote</button>
-
-      <div style="margin-left:auto;display:flex;gap:8px">
-        <button id="syncNowBtn" class="secondary" type="button">Sync Now</button>
-        <button id="exportBtn" type="button">Export JSON</button>
-        <label style="display:inline-block">
-          <input id="importFile" type="file" accept=".json" style="display:none"/>
-          <button id="importBtn" type="button" class="secondary">Import JSON</button>
-        </label>
-      </div>
-    </div>
-
-    <div id="quoteDisplay">Click "Show New Quote" to begin</div>
-    <div style="margin-top:8px;color:#666" id="statusLine">Status: idle</div>
-
-    <div class="grid">
-      <div class="box">
-        <h3>Add a Quote</h3>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <input id="newQuoteText" type="text" placeholder="Quote text" style="flex:1;min-width:160px"/>
-          <input id="newQuoteCategory" type="text" placeholder="Category" style="width:160px"/>
-          <button id="addQuoteBtn" type="button">Add</button>
-        </div>
-        <p style="font-size:0.9rem;color:#555;margin-top:8px">Adding posts also simulates POST to mock API.</p>
-      </div>
-
-      <div class="box">
-        <h3>Quotes Preview</h3>
-        <div id="quotesList" style="display:grid;gap:6px;max-height:260px;overflow:auto"></div>
-      </div>
-    </div>
-
-    <footer>
-      Sync uses JSONPlaceholder as simulated API. Server changes take precedence by default.
-      <div style="margin-top:8px;"><a href="https://twitter.com/intent/tweet?text=I%20just%20implemented%20sync%20and%20conflict%20resolution%20for%20my%20Dynamic%20Quote%20Generator!%20%23ALX_FE" target="_blank">Click here to Tweet this</a></div>
-    </footer>
-  </div>
-
+  <h1>Dynamic Quote Generator</h1>
+  <div id="quoteDisplay"></div>
+  <div id="notification" style="display:none; border:1px solid #ccc; padding:10px; margin:10px 0; background:#ffffe0;"></div>
+  <button id="syncBtn">Sync Quotes</button>
   <script src="script.js"></script>
 </body>
 </html>
