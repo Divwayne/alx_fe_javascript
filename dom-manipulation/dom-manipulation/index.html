@@ -1,12 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Quote Generator - Category Filter</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dynamic Quote Generator (Server Sync)</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #notification {
+      background-color: #dff0d8;
+      color: #3c763d;
+      padding: 10px;
+      margin-bottom: 10px;
+      display: none;
+      border-radius: 5px;
+    }
+    select, input, button { margin: 5px; padding: 5px; }
+  </style>
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
+
+  <div id="notification"></div>
 
   <div>
     <select id="categoryFilter" onchange="filterQuotes()">
